@@ -7,16 +7,20 @@ public class GameManager : MonoBehaviour
 {
     [TextArea(15,15)]
     public string boardStr;
+    public ShipPlacer shipPlacer;
 
 
     public int boardSize;
     public int numberOfShips = 5;
+    public bool playerTurn; // If false -> computer turn
 
-    
+    public bool gameStarted;
 
-    private Board board;
+    public Board board;
 
     public static GameManager instance;
+    public GameObject fieldPrefab;
+    public bool placingShips;
 
     private void Awake()
     {
@@ -28,16 +32,18 @@ public class GameManager : MonoBehaviour
         Battleship[] battleships = new Battleship[numberOfShips];
         battleships = Utility.GenerateBattleships(battleships);
 
-        board = Utility.GenerateBoard(new Board(boardSize));
+        //board = Utility.GenerateBoard(new Board(boardSize));
+        board = Utility.GenerateGameBoard(new Board(boardSize));
 
+        LetPlayerPlaceShips();
 
-        for (int i = 0; i < numberOfShips; i++)
-        {
-            PlaceShip(board, battleships[i]);
-        }
+        boardStr = Utility.PrintBoard(board.GetBoard());
+    }
 
-
-        boardStr = Utility.PrintBoard(board.board);
+    private void LetPlayerPlaceShips()
+    {
+        placingShips = true;
+        shipPlacer.StartPlacingShips();
     }
 
     public void ShipSunk(Battleship battleship)

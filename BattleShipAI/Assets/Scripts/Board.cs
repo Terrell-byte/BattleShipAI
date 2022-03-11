@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Board 
 {
-    public Field[,] board;
+    private Field[,] board;
     public int boardSize;
 
     public Board(int boardSize)

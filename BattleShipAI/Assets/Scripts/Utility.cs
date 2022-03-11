@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Utility 
+public class Utility : MonoBehaviour
 {
     public static string PrintBoard(Field[,] board)
     {
@@ -30,6 +30,25 @@ public class Utility
         }
         return boardStr;
     }
+
+    public static Board GenerateGameBoard(Board board)
+    {
+        GameObject boardParent = new GameObject();
+        boardParent.name = "BoardParent";
+        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
+        {
+            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
+            {
+                GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x, y), Quaternion.identity);
+                fieldOb.AddComponent<Field>();
+                fieldOb.transform.SetParent(boardParent.transform);
+
+                board.GetBoard()[x, y] = fieldOb.GetComponent<Field>();
+            }
+        }
+        return board;
+    }
+
 
     public static Battleship[] GenerateBattleships(Battleship[] battleships)
     {
