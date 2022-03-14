@@ -31,10 +31,10 @@ public class Utility : MonoBehaviour
         return boardStr;
     }
 
-    public static Board GenerateGameBoard(Board board)
+    public static Board GeneratePlayerBoard(Board board)
     {
         GameObject boardParent = new GameObject();
-        boardParent.name = "BoardParent";
+        boardParent.name = "PlayerBoardParent";
         for (int y = 0; y < board.GetBoard().GetLength(1); y++)
         {
             for (int x = 0; x < board.GetBoard().GetLength(0); x++)
@@ -42,8 +42,34 @@ public class Utility : MonoBehaviour
                 GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x, y), Quaternion.identity);
                 fieldOb.AddComponent<Field>();
                 fieldOb.transform.SetParent(boardParent.transform);
+                Field field = fieldOb.GetComponent<Field>();
+                field.x = x;
+                field.y = y;
+                field.enemyField = false;
 
-                board.GetBoard()[x, y] = fieldOb.GetComponent<Field>();
+                board.GetBoard()[x, y] = field;
+            }
+        }
+        return board;
+    }
+
+    public static Board GenerateComputerBoard(Board board, int offset)
+    {
+        GameObject boardParent = new GameObject();
+        boardParent.name = "PlayerComputerParent";
+        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
+        {
+            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
+            {
+                GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x+offset, y), Quaternion.identity);
+                fieldOb.AddComponent<Field>();
+                fieldOb.transform.SetParent(boardParent.transform);
+                Field field = fieldOb.GetComponent<Field>();
+                field.x = x;
+                field.y = y;
+                field.enemyField = true;
+
+                board.GetBoard()[x, y] = field;
             }
         }
         return board;
@@ -59,38 +85,6 @@ public class Utility : MonoBehaviour
         }
 
         return battleships;
-    }
-
-    public static Board GenerateBoard(Board board)
-    {
-        
-        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
-        {
-            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
-            {
-
-                board.GetBoard()[x, y] = new Field(false);
-
-            }
-        }
-        return board;
-    }
-
-    public static Board GenerateRandomBoard(Board board)
-    {
-
-        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
-        {
-            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
-            {
-                board.GetBoard()[x, y] = new Field(false);
-            }
-        }
-
-        
-        
-
-        return board;
     }
 
 }

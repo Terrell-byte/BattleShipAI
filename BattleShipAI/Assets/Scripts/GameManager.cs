@@ -10,13 +10,13 @@ public class GameManager : MonoBehaviour
     public ShipPlacer shipPlacer;
 
 
-    public int boardSize;
+    public int boardSize, boardOffset;
     public int numberOfShips = 5;
     public bool playerTurn; // If false -> computer turn
 
     public bool gameStarted;
 
-    public Board board;
+    public Board playerBoard, computerBoard;
 
     public static GameManager instance;
     public GameObject fieldPrefab;
@@ -32,18 +32,23 @@ public class GameManager : MonoBehaviour
         Battleship[] battleships = new Battleship[numberOfShips];
         battleships = Utility.GenerateBattleships(battleships);
 
-        //board = Utility.GenerateBoard(new Board(boardSize));
-        board = Utility.GenerateGameBoard(new Board(boardSize));
+        playerBoard = Utility.GeneratePlayerBoard(new Board(boardSize));
+        computerBoard = Utility.GenerateComputerBoard(new Board(boardSize),boardOffset);
 
-        LetPlayerPlaceShips();
-
-        boardStr = Utility.PrintBoard(board.GetBoard());
+        LetPlayerPlaceShips(battleships);
+        Computer.PlaceShips(shipPlacer,computerBoard,boardOffset, numberOfShips);
     }
 
-    private void LetPlayerPlaceShips()
+    public void StartGame()
+    {
+        gameStarted = true;
+        shipPlacer.gameObject.SetActive(false);
+    }
+
+    private void LetPlayerPlaceShips(Battleship[] battleships)
     {
         placingShips = true;
-        shipPlacer.StartPlacingShips();
+        shipPlacer.StartPlacingShips(battleships);
     }
 
     public void ShipSunk(Battleship battleship)
@@ -51,20 +56,5 @@ public class GameManager : MonoBehaviour
         Debug.Log("Ship is sunk");
     }
 
-    public void PlaceShip(Board board, Battleship battleship)
-    {
-        for(int i = 0; i < battleship.size; i++)
-        {
-            if (!battleship.vertical)
-            {
-                board.GetBoard()[battleship.x+i, battleship.y].shipPresent = true;
-                board.GetBoard()[battleship.x + i, battleship.y].fieldPartOfShip = battleship;
-            }
-            else
-            {
-                board.GetBoard()[battleship.x, battleship.y+i].shipPresent = true;
-                board.GetBoard()[battleship.x, battleship.y+i].fieldPartOfShip = battleship;
-            }
-        }
-    }
+    
 }
