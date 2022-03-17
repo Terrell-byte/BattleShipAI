@@ -6,10 +6,10 @@ public class Battleship
 {
     public int size, health, x, y;
     public string name;
-    public bool vertical;
+    public bool vertical, playerShip;
 
 
-    public Battleship(int x, int y, int size, bool vertical)
+    public Battleship(int x, int y, int size, bool vertical, bool shipOwner)
     {
         this.size = size;
         this.health = size;
@@ -38,13 +38,17 @@ public class Battleship
         this.vertical = vertical;
     }
 
+    /// <summary>
+    /// Is called when a field containing a ship is hit by either the Player or the AI. 
+    /// Will display a sunk ship, if the ship has been hit in all spaces.
+    /// </summary>
     public void Hit()
     {
         health--;
         //Debug.Log("HIT" + health);
         if (health <= 0)
         {
-            Debug.Log(x);
+            //Debug.Log(x);
             GameManager.instance.ShipSunk(this);
             GameObject sunkShip = new GameObject();
             sunkShip.name = "Sunken "+name;
@@ -61,7 +65,6 @@ public class Battleship
                 sunkShip.transform.RotateAround(new Vector3(x, y, 0), new Vector3(0, 0, 1), 90);
                 sunkShip.transform.position = new Vector2(x+1, y);
             }
-            Debug.Log(x);
 
         }
     }

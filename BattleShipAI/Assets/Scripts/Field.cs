@@ -17,33 +17,49 @@ public class Field : MonoBehaviour
         this.y = y;
     }
 
+    /// <summary>
+    /// When the Player tries to place a ship or shoot the AI's board. 
+    /// </summary>
     private void OnMouseDown()
     {
-        if (enemyField && GameManager.instance.gameStarted && GameManager.instance.playerTurn && !firedUpon)
-        {
-            firedUpon = true;
-            GameManager.instance.playerTurn = false;
-            if (shipPresent)
-            {
-                fieldPartOfShip.Hit();
-                GetComponent<SpriteRenderer>().color = new Color(0, 0, 255);
-            }
-            else
-            {
-                GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
-            }
-        } else if (!enemyField && GameManager.instance.placingShips)
+        if (!enemyField && GameManager.instance.placingShips)
         {
             GameManager.instance.shipPlacer.MoveToField(transform.position);
-            GameManager.instance.shipPlacer.PlaceShip(GameManager.instance.playerBoard,x,y);
+            GameManager.instance.shipPlacer.PlaceShip(GameManager.instance.playerBoard, x, y);
         }
+        else
+        {
+            if(GameManager.instance.gameStarted && GameManager.instance.playerTurn && !firedUpon && enemyField && GameManager.instance.gameStarted)
+            {
+                FieldHit();
+                GameManager.instance.playerTurn = false;
+                GameManager.instance.StartComputerTurn();
+            }
+        }
+        
 
-
-
-        //for testing
-        GameManager.instance.playerTurn = true;
     }
 
+    /// <summary>
+    /// When a field is chosen for attack
+    /// </summary>
+    public void FieldHit()
+    {
+        firedUpon = true;
+        if (shipPresent)
+        {
+            fieldPartOfShip.Hit();
+            GetComponent<SpriteRenderer>().color = new Color(0, 0, 255);
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
+        }
+    }
+
+    /// <summary>
+    /// If the Player is placing their ships, the visual representation should be moved to the current field's position. 
+    /// </summary>
     private void OnMouseOver()
     {
         if (GameManager.instance.placingShips)
