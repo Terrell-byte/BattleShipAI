@@ -7,7 +7,7 @@ public class Toggle : MonoBehaviour
     public void ShowHeatmap()
     {
         GameManager.instance.showHeatMap = !GameManager.instance.showHeatMap;
-        UI.UpdateHeatMapVisually(GameManager.instance.computer.heatMap);
+        UI.UpdateHeatMapVisually(GameManager.instance.computer.heatmap.heatmap);
     }
 
     public void PlayerStarts()

@@ -86,7 +86,7 @@ public class Utility : MonoBehaviour
                 field.y = y;
                 field.enemyField = false;
 
-                board.GetBoard()[x, y] = field;
+                board[x, y] = field;
             }
         }
         return board;
@@ -114,7 +114,7 @@ public class Utility : MonoBehaviour
                 field.y = y;
                 field.enemyField = true;
 
-                board.GetBoard()[x, y] = field;
+                board[x, y] = field;
             }
         }
         return board;
@@ -161,7 +161,7 @@ public class Utility : MonoBehaviour
             {
                 if (x + posX >= board.boardSize
                     || y + posY >= board.boardSize
-                    || board.GetBoard()[posX + x, posY + y].fieldPartOfShip != null)
+                    || board[posX + x, posY + y].fieldPartOfShip != null)
                 {
                     return false;
                 }
@@ -188,7 +188,7 @@ public class Utility : MonoBehaviour
             {
                 if (x + posX >= board.boardSize 
                     || y + posY >= board.boardSize 
-                    || board.GetBoard()[posX + x, posY + y].firedUpon)
+                    || board[posX + x, posY + y].firedUpon)
                 {
                     return false;
                 }

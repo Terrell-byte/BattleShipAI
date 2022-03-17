@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public bool gameStarted, showHeatMap, placingShips, intelligentAI;
     public int boardSize, boardOffset;
     public int numberOfShips = 5;
+    private PlacementStrategy placementStrategy = new PlacementStrategy();
 
     private int playerShipsRemaining, computerShipsRemaining;
 
@@ -52,16 +53,16 @@ public class GameManager : MonoBehaviour
         computerBoard = Utility.GenerateComputerBoard(new Board(boardSize), boardOffset);
 
         LetPlayerPlaceShips(battleships);
-        computer.PlaceShipsRandom(shipPlacer, computerBoard, boardOffset, numberOfShips);
+        placementStrategy.PlaceShipsStrategically(shipPlacer, computerBoard, boardOffset, numberOfShips);
 
         computerShipsRemaining = numberOfShips;
         playerShipsRemaining = numberOfShips;
 
         foreach (Battleship bs in battleships)
         {
-            computer.playerShipsRemaining.Add(bs);
+            computer.heatmap.playerShipsRemaining.Add(bs);
         }
-        computer.UpdateHeatMap();
+        computer.heatmap.UpdateHeatMap();
     }
 
     private void SetCamera()

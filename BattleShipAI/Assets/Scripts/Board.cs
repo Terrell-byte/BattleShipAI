@@ -13,8 +13,11 @@ public class Board
         this.boardSize = boardSize;
     }
 
-    public Field[,] GetBoard()
+    public Field[,] GetBoard() => board;
+
+    public Field this[int x, int y]
     {
-        return board;
+        get { return board[x, y]; }
+        set { board[x, y] = value; }
     }
 }

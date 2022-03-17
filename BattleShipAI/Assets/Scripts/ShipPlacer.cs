@@ -163,7 +163,7 @@ public class ShipPlacer : MonoBehaviour
         {
             for (int x = 0; x < length; x++)
             {
-                Field field = board.GetBoard()[posX + x, posY + y];
+                Field field = board[posX + x, posY + y];
                 field.shipPresent = true;
                 field.fieldPartOfShip = ship;
                 field.gameObject.GetComponent<SpriteRenderer>().color = new Color(0, 55, 0);
