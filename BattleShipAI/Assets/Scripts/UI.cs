@@ -13,14 +13,19 @@ public class UI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        for (int y = 0; y < heatmap.GetLength(1); y++)
+        if (GameManager.instance.showHeatMap)
         {
-            for (int x = 0; x < heatmap.GetLength(0); x++)
+            for (int y = 0; y < heatmap.GetLength(1); y++)
             {
-                GameObject newText = Instantiate(GameManager.instance.heatmapText, GameManager.instance.heatMapCanvas.transform);
-                newText.GetComponent<Text>().text = heatmap[x,y].ToString();
+                for (int x = 0; x < heatmap.GetLength(0); x++)
+                {
+                    GameObject newText = Instantiate(GameManager.instance.heatmapText, GameManager.instance.heatMapCanvas.transform);
+                    newText.GetComponent<Text>().text = heatmap[x, y].ToString();
+                }
             }
         }
+
+        
 
     }
 }

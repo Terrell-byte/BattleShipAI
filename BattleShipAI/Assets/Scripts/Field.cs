@@ -66,6 +66,13 @@ public class Field : MonoBehaviour
         {
             GameManager.instance.shipPlacer.MoveToField(transform.position);
         }
+
+
+        //For testing AI placement
+        /*if (fieldPartOfShip != null)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(55, 0, 0);
+        }*/
     }
 
 }

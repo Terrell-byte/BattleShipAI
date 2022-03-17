@@ -151,7 +151,9 @@ public class Utility : MonoBehaviour
         {
             for (int x = 0; x < length; x++)
             {
-                if(x+posX > board.GetBoard().GetLength(0) || y+posY > board.GetBoard().GetLength(0) || board.GetBoard()[posX + x, posY + y].fieldPartOfShip != null)
+                if(x+posX >= board.GetBoard().GetLength(0)
+                    || y+posY >= board.GetBoard().GetLength(1)
+                    || board.GetBoard()[posX + x, posY + y].fieldPartOfShip != null)
                 {
                     return false;
                 }
