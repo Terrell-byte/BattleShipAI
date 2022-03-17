@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ShipPlacer : MonoBehaviour
 {
-    public int currentShip;
     public GameObject placedShip;
-    public bool vertical;
-    private SpriteRenderer spriteRenderer;
-    public int length, height;
     public List<Battleship> shipsToPlace = new List<Battleship>();
+    public int currentShip, length, height;
+    public bool vertical;
+
+    private SpriteRenderer spriteRenderer;
     private Transform parent;
 
     private void Awake()
@@ -26,12 +26,12 @@ public class ShipPlacer : MonoBehaviour
     /// <param name="battleships"></param>
     public void StartPlacingShips(Battleship[] battleships)
     {
-        foreach(Battleship bs in battleships)
+        foreach (Battleship bs in battleships)
         {
             shipsToPlace.Add(bs);
         }
         currentShip = battleships.Length - 1;
-        spriteRenderer.sprite = GameManager.instance.GetComponent<SpriteManager>().shipSprite[shipsToPlace[currentShip].size-2];
+        spriteRenderer.sprite = GameManager.instance.GetComponent<SpriteManager>().shipSprite[shipsToPlace[currentShip].size - 2];
         length = battleships[currentShip].size;
         height = 1;
         vertical = false;
@@ -91,14 +91,16 @@ public class ShipPlacer : MonoBehaviour
     /// <param name="position"></param>
     public void MoveToField(Vector3 position)
     {
-        if((position.x + length <= GameManager.instance.boardSize && position.y + height <= GameManager.instance.boardSize))
+        if (position.x + length <= GameManager.instance.boardSize 
+            && position.y + height <= GameManager.instance.boardSize)
         {
-            transform.position = position;
+            transform.position = vertical ? new Vector3(position.x + 1, position.y, position.z) : position;
+            /* transform.position = position;
 
             if (vertical)
             {
-                transform.position = new Vector2(transform.position.x+1, transform.position.y);
-            }
+                transform.position = new Vector2(transform.position.x + 1, transform.position.y);
+            } */
         }
     }
 
@@ -126,7 +128,7 @@ public class ShipPlacer : MonoBehaviour
         }
         else
         {
-            transform.RotateAround(new Vector3(transform.position.x+1, transform.position.y, 0), new Vector3(0, 0, 1), -90);
+            transform.RotateAround(new Vector3(transform.position.x + 1, transform.position.y, 0), new Vector3(0, 0, 1), -90);
         }
 
         int temp = height;
@@ -144,23 +146,14 @@ public class ShipPlacer : MonoBehaviour
     {
         Battleship ship = shipsToPlace[currentShip];
         ship.vertical = vertical;
-        int height = 0;
-        int length = 0;
-        if (vertical)
-        {
-            length = 1;
-            height = shipsToPlace[currentShip].size;
-        }
-        else
-        {
-            length = shipsToPlace[currentShip].size;
-            height = 1;
-        }
+        int height = vertical ? shipsToPlace[currentShip].size : 1;
+        int length = vertical ? 1 : shipsToPlace[currentShip].size;
 
         ship.x = posX;
         ship.y = posY;
 
-        if (posX + length > GameManager.instance.boardSize || posY + height > GameManager.instance.boardSize
+        if (posX + length > GameManager.instance.boardSize 
+            || posY + height > GameManager.instance.boardSize
             || !Utility.IsValidPlacement(posX, posY, length, height, board))
         {
             return;
@@ -170,9 +163,10 @@ public class ShipPlacer : MonoBehaviour
         {
             for (int x = 0; x < length; x++)
             {
-                board.GetBoard()[posX + x, posY + y].shipPresent = true;
-                board.GetBoard()[posX + x, posY + y].fieldPartOfShip = ship;
-                board.GetBoard()[posX + x, posY + y].gameObject.GetComponent<SpriteRenderer>().color = new Color(0, 55, 0);
+                Field field = board.GetBoard()[posX + x, posY + y];
+                field.shipPresent = true;
+                field.fieldPartOfShip = ship;
+                field.gameObject.GetComponent<SpriteRenderer>().color = new Color(0, 55, 0);
             }
         }
 

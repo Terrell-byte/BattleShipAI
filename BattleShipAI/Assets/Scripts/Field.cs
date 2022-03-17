@@ -29,14 +29,18 @@ public class Field : MonoBehaviour
         }
         else
         {
-            if(GameManager.instance.gameStarted && GameManager.instance.playerTurn && !firedUpon && enemyField && GameManager.instance.gameStarted)
+            if (GameManager.instance.gameStarted
+                && GameManager.instance.playerTurn 
+                && !firedUpon 
+                && enemyField 
+                && GameManager.instance.gameStarted)
             {
                 FieldHit();
                 GameManager.instance.playerTurn = false;
                 GameManager.instance.StartComputerTurn();
             }
         }
-        
+
 
     }
 

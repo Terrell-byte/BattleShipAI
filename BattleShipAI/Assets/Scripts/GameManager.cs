@@ -7,39 +7,27 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    [TextArea(15,15)]
+    [TextArea(15, 15)]
+
+    public static GameManager instance;
+    public ShipPlacer shipPlacer;
+    public Computer computer;
+    public Board playerBoard, computerBoard;
+    public Text victoryText;
+    public GameObject fieldPrefab, heatMapCanvas, heatmapText;
+    public Camera camera;
     public string heatMapStr;
+    public bool playerTurn; // If false -> computer turn
+    public bool gameStarted, showHeatMap, placingShips, intelligentAI;
+    public int boardSize, boardOffset;
+    public int numberOfShips = 5;
+
+    private int playerShipsRemaining, computerShipsRemaining;
 
     public void RestartGame()
     {
         SceneManager.LoadScene("SampleScene");
     }
-
-    public ShipPlacer shipPlacer;
-    public Text victoryText; 
-
-    private int playerShipsRemaining, computerShipsRemaining;
-
-    public int boardSize, boardOffset;
-    public int numberOfShips = 5;
-    public bool playerTurn; // If false -> computer turn
-    public Computer computer;
-
-    public bool gameStarted, showHeatMap;
-
-   
-
-    public Board playerBoard, computerBoard;
-
-    public static GameManager instance;
-    public GameObject fieldPrefab;
-    public bool placingShips;
-    public GameObject heatMapCanvas;
-    public GameObject heatmapText;
-
-    public bool intelligentAI;
-
-    public Camera camera;
 
     private void Awake()
     {
@@ -50,7 +38,6 @@ public class GameManager : MonoBehaviour
     {
         GameObject.Find("Playerstart").SetActive(false);
         GameObject.Find("BoardSize").SetActive(false);
-
 
         if (boardSize > 10)
         {
@@ -80,8 +67,8 @@ public class GameManager : MonoBehaviour
     private void SetCamera()
     {
         float scale = ((float)boardSize / 10);
-        camera.orthographicSize = camera.orthographicSize*scale;
-        camera.transform.position = new Vector3(camera.transform.position.x * scale, camera.transform.position.y * scale,-1);
+        camera.orthographicSize = camera.orthographicSize * scale;
+        camera.transform.position = new Vector3(camera.transform.position.x * scale, camera.transform.position.y * scale, -1);
     }
 
 
@@ -91,7 +78,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        Debug.Log(""+ ((boardSize / 2) + 1) + " " + ((boardSize / 2) - 1));
+        Debug.Log("" + ((boardSize / 2) + 1) + " " + ((boardSize / 2) - 1));
 
         gameStarted = true;
         shipPlacer.gameObject.SetActive(false);
@@ -128,15 +115,15 @@ public class GameManager : MonoBehaviour
         if (!playerTurn)
         {
             playerShipsRemaining--;
-            Debug.Log("Player's "+battleship.name + " is sunk");
+            Debug.Log("Player's " + battleship.name + " is sunk");
         }
         else
         {
             computerShipsRemaining--;
             Debug.Log("Computer's " + battleship.name + " is sunk");
         }
-        
-        if(playerShipsRemaining <= 0)
+
+        if (playerShipsRemaining <= 0)
         {
             Debug.Log("Computer has won");
             victoryText.text = "Defeat";
@@ -144,7 +131,7 @@ public class GameManager : MonoBehaviour
             gameStarted = false;
         }
 
-        if(computerShipsRemaining <= 0)
+        if (computerShipsRemaining <= 0)
         {
             victoryText.text = "Victory";
             victoryText.gameObject.SetActive(true);
@@ -152,6 +139,4 @@ public class GameManager : MonoBehaviour
             gameStarted = false;
         }
     }
-
-    
 }

@@ -5,9 +5,11 @@ using UnityEngine;
 public class Computer : MonoBehaviour
 {
     public int[,] heatMap;
-    private List<Field> hitFields = new List<Field>();
     public List<Battleship> playerShipsRemaining = new List<Battleship>();
-    private int[,] neighbours = { {1, 0 }, {0,1 },{-1,0},{ 0,-1 } };
+
+
+    private List<Field> hitFields = new List<Field>();
+    private int[,] neighbours = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
 
     /*
      * Placement strategy
@@ -28,64 +30,53 @@ public class Computer : MonoBehaviour
     public void PlaceShipsRandom(ShipPlacer sp, Board board, int boardOffset, int numberOfShips)
     {
         Battleship[] battleships = new Battleship[numberOfShips];
-        battleships = Utility.GenerateBattleships(battleships,false);
+        battleships = Utility.GenerateBattleships(battleships, false);
 
         foreach (Battleship b in battleships)
         {
             bool hasPlacedShip = false;
-            while(!hasPlacedShip)
+            while (!hasPlacedShip)
             {
                 //int tryToFollowRules = 0;
-                int xPos = Random.Range(0, board.GetBoard().GetLength(0));
-                int yPos = Random.Range(0, board.GetBoard().GetLength(1));
+                int xPos = Random.Range(0, board.boardSize);
+                int yPos = Random.Range(0, board.boardSize);
                 bool vertical = Random.Range(0, 2) == 1 ? true : false;
+                int height = vertical ? b.size : 1;
+                int length = vertical ? 1 : b.size;
 
-                if(board.GetBoard().GetLength(0) > 8) //The middle is only off-limits, if the board is large enough. 
+                // The middle is only off-limits, if the board is large enough. 
+                if (board.boardSize > 8)
                 {
-                    if (IsInMiddle(xPos, yPos, vertical, b.size, board)) // Should not be placed in the middle
+                    // A ship should not be placed in the middle
+                    if (IsInMiddle(xPos, yPos, height, length, board))
                     {
                         continue;
                     }
                 }
-                
-                if (HasMultipleRowSpacesTaken(yPos,board)) //Only a vertical ship may be in a row also
+
+                // Two ships may only share one row if at least one of them is vertical
+                if (MultipleRowSpacesTaken(yPos, board))
                 {
                     continue;
                 }
 
-                if ((yPos+1 < board.GetBoard().GetLength(1) && !Utility.IsValidPlacement(xPos, yPos+1, b.size, 1, board))
-                    || (yPos - 1 >= 0 && !Utility.IsValidPlacement(xPos, yPos - 1, b.size, 1, board))) //Should not place ship right above or below another
+                // Should not place ship right above or below another
+                if ((yPos + 1 < board.boardSize && !Utility.IsValidPlacement(xPos, yPos + 1, b.size, 1, board))
+                    || (yPos - 1 >= 0 && !Utility.IsValidPlacement(xPos, yPos - 1, b.size, 1, board))) 
                 {
                     continue;
                 }
 
-
-                //int height = vertical ? b.size : 1;
-                //int length = vertical ? 1 : b.size;
-
-                if (vertical)
+                if (Utility.IsValidPlacement(xPos, yPos, length, height, board))
                 {
-                    if (Utility.IsValidPlacement(xPos, yPos, 1, b.size, board))
+                    for (int j = 0; j < b.size; j++)
                     {
-                        for (int j = 0; j < b.size; j++)
-                        {
-                            board.GetBoard()[xPos, yPos + j].shipPresent = true;
-                            board.GetBoard()[xPos, yPos + j].fieldPartOfShip = b;
-                        }
-                        hasPlacedShip = true;
+                        int x = vertical ? xPos : xPos + j;
+                        int y = vertical ? yPos + j : yPos;
+                        board.GetBoard()[x, y].shipPresent = true;
+                        board.GetBoard()[x, y].fieldPartOfShip = b;
                     }
-                }
-                else
-                {
-                    if (Utility.IsValidPlacement(xPos, yPos, b.size, 1, board))
-                    {
-                        for (int j = 0; j < b.size; j++)
-                        {
-                            board.GetBoard()[xPos + j, yPos].shipPresent = true;
-                            board.GetBoard()[xPos + j, yPos].fieldPartOfShip = b;
-                        }
-                        hasPlacedShip = true;
-                    }
+                    hasPlacedShip = true;
                 }
 
                 b.vertical = vertical;
@@ -97,12 +88,12 @@ public class Computer : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Checks whether multiple spaces in a given row are taken.
     /// </summary>
     /// <param name="yPos"></param>
     /// <param name="board"></param>
     /// <returns></returns>
-    private bool HasMultipleRowSpacesTaken(int yPos, Board board)
+    private bool MultipleRowSpacesTaken(int yPos, Board board)
     {
         int spacesTaken = 0;
         for (int x = 0; x < board.boardSize; x++)
@@ -110,7 +101,7 @@ public class Computer : MonoBehaviour
             if (board.GetBoard()[x, yPos].fieldPartOfShip != null)
             {
                 spacesTaken++;
-                if(spacesTaken > 1)
+                if (spacesTaken > 1)
                 {
                     return true;
                 }
@@ -120,17 +111,14 @@ public class Computer : MonoBehaviour
         return false;
     }
 
-    private bool IsInMiddle(int posX, int posY, bool vertical, int size, Board board)
+    private bool IsInMiddle(int posX, int posY, int height, int length, Board board)
     {
-        int height = vertical ? size : 1;
-        int length = vertical ? 1 : size;
-
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < length; x++)
             {
-                if (posX+x < (board.boardSize / 2) + 2 && posX+x > (board.boardSize / 2) - 2
-                            && posY+y < (board.boardSize / 2) + 2 && posY+y > (board.boardSize / 2) - 2)
+                if (posX + x < (board.boardSize / 2) + 2 && posX + x > (board.boardSize / 2) - 2
+                    && posY + y < (board.boardSize / 2) + 2 && posY + y > (board.boardSize / 2) - 2)
                 {
                     return true;
                 }
@@ -150,7 +138,7 @@ public class Computer : MonoBehaviour
     public void PlaceShipsCorner(ShipPlacer sp, Board board, int boardOffset, int numberOfShips)
     {
         Battleship[] battleships = new Battleship[numberOfShips];
-        battleships = Utility.GenerateBattleships(battleships,false);
+        battleships = Utility.GenerateBattleships(battleships, false);
         for (int y = 0; y < battleships.Length; y++)
         {
             battleships[y].x = battleships[y].x + boardOffset;
@@ -173,9 +161,9 @@ public class Computer : MonoBehaviour
     public void StartTurn(Board board)
     {
         int x, y = 0;
-        int highestHeatMapValue = GetHighestHeatMapValue(out x,out y);
+        int highestHeatMapValue = GetHighestHeatMapValue(out x, out y);
 
-        
+
         //on higher difficulty it activates the intelligent AI
         if (GameManager.instance.intelligentAI)
         {
@@ -187,7 +175,8 @@ public class Computer : MonoBehaviour
             {
                 x = 0;
                 y = 0;
-                while (x < board.GetBoard().GetLength(0) && y < board.GetBoard().GetLength(1)
+                while (x < board.boardSize 
+                    && y < board.boardSize
                     && board.GetBoard()[x, y].firedUpon)
                 {
                     x++;
@@ -203,8 +192,8 @@ public class Computer : MonoBehaviour
             int hasTried = 0;
             while (!hasShot && hasTried < 1000)
             {
-                int xCor = Random.Range(0, board.GetBoard().GetLength(0));
-                int yCor = Random.Range(0, board.GetBoard().GetLength(1));
+                int xCor = Random.Range(0, board.boardSize);
+                int yCor = Random.Range(0, board.boardSize);
                 if (!board.GetBoard()[x, y].firedUpon)
                 {
                     board.GetBoard()[xCor, yCor].FieldHit();
@@ -234,7 +223,7 @@ public class Computer : MonoBehaviour
         {
             for (int x = 0; x < heatMap.GetLength(0); x++)
             {
-                if(heatMap[x,y] > highestValue)
+                if (heatMap[x, y] > highestValue)
                 {
                     highestValue = heatMap[x, y];
                     indexX = x;
@@ -253,13 +242,13 @@ public class Computer : MonoBehaviour
         Board board = GameManager.instance.playerBoard;
         heatMap = new int[GameManager.instance.boardSize, GameManager.instance.boardSize]; //reset heatmap
 
-        for (int x = 0; x < board.GetBoard().GetLength(0); x++)
+        for (int x = 0; x < board.boardSize; x++)
         {
-            for (int y = 0; y < board.GetBoard().GetLength(0); y++)
+            for (int y = 0; y < board.boardSize; y++)
             {
                 TryToPlaceAllShips(x, y, board, true); //true means horisontal
                 TryToPlaceAllShips(x, y, board, false); //false means vertical
-                SetPriorityOfShotField(x,y,board);
+                SetPriorityOfShotField(x, y, board);
             }
         }
 
@@ -274,10 +263,10 @@ public class Computer : MonoBehaviour
     /// <param name="posX"></param>
     /// <param name="posY"></param>
     /// <param name="board"></param>
-    private void SetPriorityOfShotField(int posX, int posY, Board board)
+    private async void SetPriorityOfShotField(int posX, int posY, Board board)
     {
-        if(!(board.GetBoard()[posX, posY].firedUpon
-            && board.GetBoard()[posX,posY].fieldPartOfShip != null
+        if (!(board.GetBoard()[posX, posY].firedUpon
+            && board.GetBoard()[posX, posY].fieldPartOfShip != null
             && board.GetBoard()[posX, posY].fieldPartOfShip.health > 0))
         {
             return; //Only prioritize around this field, if it is hit and has a ship
@@ -285,13 +274,17 @@ public class Computer : MonoBehaviour
 
         bool hitNeighbour = false;
         for (int i = 0; i < 4; i++)
-        { 
-            if(posX + neighbours[i, 0] < board.GetBoard().GetLength(0) && posY + neighbours[i, 1] < board.GetBoard().GetLength(0)
-                && posX + neighbours[i, 0] >= 0 && posY + neighbours[i, 1] >= 0)
+        {
+            int x = posX + neighbours[i, 0];
+            int y = posY + neighbours[i, 1];
+
+            if (Utility.IsValidCoordinate(x, y, board))
             {
-                if (board.GetBoard()[posX + neighbours[i, 0], posY + neighbours[i, 1]].firedUpon &&
-                    board.GetBoard()[posX + neighbours[i, 0], posY + neighbours[i, 1]].fieldPartOfShip != null
-                    && board.GetBoard()[posX + neighbours[i, 0], posY + neighbours[i, 1]].fieldPartOfShip.health>0)
+                Field currentField = board.GetBoard()[x, y];
+
+                if (currentField.firedUpon 
+                    && currentField.fieldPartOfShip != null
+                    && currentField.fieldPartOfShip.health > 0)
                 {
                     hitNeighbour = true;
                 }
@@ -302,12 +295,14 @@ public class Computer : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                if (posX + neighbours[i, 0] < board.GetBoard().GetLength(0) && posY + neighbours[i, 1] < board.GetBoard().GetLength(0)
-                    && posX + neighbours[i, 0] >= 0 && posY + neighbours[i, 1] >= 0)
+                int x = posX + neighbours[i, 0];
+                int y = posY + neighbours[i, 1];
+
+                if (Utility.IsValidCoordinate(x, y, board))
                 {
-                    if (!board.GetBoard()[posX + neighbours[i, 0], posY + neighbours[i, 1]].firedUpon)
+                    if (!board.GetBoard()[x, y].firedUpon)
                     {
-                        heatMap[posX + neighbours[i, 0], posY + neighbours[i, 1]] += 100;
+                        heatMap[x, y] += 100;
                         //Debug.Log("no hit heighbours: "+ posX + neighbours[i, 0]+","+ posY + neighbours[i, 1]);
                     }
                 }
@@ -317,16 +312,23 @@ public class Computer : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                if (posX + neighbours[i, 0] < board.GetBoard().GetLength(0) && posY + neighbours[i, 1] < board.GetBoard().GetLength(0)
-                    && posX + neighbours[i, 0] >= 0 && posY + neighbours[i, 1] >= 0)
+                int x = posX + neighbours[i, 0];
+                int y = posY + neighbours[i, 1];
+
+                if (Utility.IsValidCoordinate(x, y, board))
                 {
-                    if (board.GetBoard()[posX + neighbours[i, 0], posY + neighbours[i, 1]].firedUpon)
+                    if (board.GetBoard()[x, y].firedUpon)
                     {
-                        if(posX + (-1) * neighbours[i, 0] >= 0 && posY + (-1) * neighbours[i, 1] >= 0
-                            && posX + (-1) * neighbours[i, 0] < board.GetBoard().GetLength(0) && posY + (-1) * neighbours[i, 1] < board.GetBoard().GetLength(0)
-                            && !board.GetBoard()[posX + (-1) * neighbours[i, 0], posY + (-1) * neighbours[i, 1]].firedUpon)
+                        int oppositeX = posX + (-1) * neighbours[i, 0];
+                        int oppositeY = posY + (-1) * neighbours[i, 1];
+
+                        if (oppositeX >= 0 
+                            && oppositeY >= 0
+                            && oppositeX < board.boardSize 
+                            && oppositeY < board.boardSize
+                            && !board.GetBoard()[oppositeX, oppositeY].firedUpon)
                         {
-                            heatMap[posX + (-1) * neighbours[i, 0], posY + (-1) * neighbours[i, 1]] += 100;
+                            heatMap[oppositeX, oppositeY] += 100;
                             //Debug.Log("prioritise one");
                             break;
                         }
@@ -348,18 +350,8 @@ public class Computer : MonoBehaviour
     {
         foreach (Battleship batship in playerShipsRemaining)
         {
-            int length;
-            int height;
-            if (vertical)
-            {
-                height = batship.size;
-                length = 1;
-            }
-            else
-            {
-                height = 1;
-                length = batship.size;
-            }
+            int length = vertical ? 1 : batship.size;
+            int height = vertical ? batship.size : 1;
 
             if (Utility.IsValidHeatMapPlacement(posX, posY, length, height))
             {

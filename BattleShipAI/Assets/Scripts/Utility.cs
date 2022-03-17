@@ -17,11 +17,11 @@ public class Utility : MonoBehaviour
         {
             for (int x = 0; x < board.GetLength(0); x++)
             {
-                if (board[x,y].firedUpon)
+                if (board[x, y].firedUpon)
                 {
                     boardStr += "X";
                 }
-                else if(board[x,y].fieldPartOfShip != null)
+                else if (board[x, y].fieldPartOfShip != null)
                 {
                     boardStr += "S";
                 }
@@ -30,7 +30,7 @@ public class Utility : MonoBehaviour
                     boardStr += "_";
                 }
             }
-            
+
             boardStr += "\n";
         }
         return boardStr;
@@ -56,7 +56,7 @@ public class Utility : MonoBehaviour
             //boardStr += "\n";
         }
 
-        for (int i = arrayStr.Length-1; i >= 0; i--)
+        for (int i = arrayStr.Length - 1; i >= 0; i--)
         {
             boardStr += arrayStr[i];
             boardStr += "\n";
@@ -74,9 +74,9 @@ public class Utility : MonoBehaviour
     {
         GameObject boardParent = new GameObject();
         boardParent.name = "PlayerBoardParent";
-        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
+        for (int y = 0; y < board.boardSize; y++)
         {
-            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
+            for (int x = 0; x < board.boardSize; x++)
             {
                 GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x, y), Quaternion.identity);
                 fieldOb.AddComponent<Field>();
@@ -102,11 +102,11 @@ public class Utility : MonoBehaviour
     {
         GameObject boardParent = new GameObject();
         boardParent.name = "PlayerComputerParent";
-        for (int y = 0; y < board.GetBoard().GetLength(1); y++)
+        for (int y = 0; y < board.boardSize; y++)
         {
-            for (int x = 0; x < board.GetBoard().GetLength(0); x++)
+            for (int x = 0; x < board.boardSize; x++)
             {
-                GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x+offset, y), Quaternion.identity);
+                GameObject fieldOb = Instantiate(GameManager.instance.fieldPrefab, new Vector2(x + offset, y), Quaternion.identity);
                 fieldOb.AddComponent<Field>();
                 fieldOb.transform.SetParent(boardParent.transform);
                 Field field = fieldOb.GetComponent<Field>();
@@ -136,6 +136,14 @@ public class Utility : MonoBehaviour
         return battleships;
     }
 
+    public static bool IsValidCoordinate(int x, int y, Board board)
+    {
+        return (x < board.boardSize
+                && y < board.boardSize
+                && x >= 0
+                && y >= 0);
+    }
+
     /// <summary>
     /// Checks whether a ship can be placed in the given field. 
     /// </summary>
@@ -151,8 +159,8 @@ public class Utility : MonoBehaviour
         {
             for (int x = 0; x < length; x++)
             {
-                if(x+posX >= board.GetBoard().GetLength(0)
-                    || y+posY >= board.GetBoard().GetLength(1)
+                if (x + posX >= board.boardSize
+                    || y + posY >= board.boardSize
                     || board.GetBoard()[posX + x, posY + y].fieldPartOfShip != null)
                 {
                     return false;
@@ -178,7 +186,9 @@ public class Utility : MonoBehaviour
         {
             for (int x = 0; x < length; x++)
             {
-                if (x + posX >= board.GetBoard().GetLength(0) || y + posY >= board.GetBoard().GetLength(0) || board.GetBoard()[posX + x, posY + y].firedUpon)
+                if (x + posX >= board.boardSize 
+                    || y + posY >= board.boardSize 
+                    || board.GetBoard()[posX + x, posY + y].firedUpon)
                 {
                     return false;
                 }
