@@ -123,10 +123,7 @@ public class Heatmap : MonoBehaviour
                         int oppositeX = posX + (-1) * neighbours[i, 0];
                         int oppositeY = posY + (-1) * neighbours[i, 1];
 
-                        if (oppositeX >= 0
-                            && oppositeY >= 0
-                            && oppositeX < board.boardSize
-                            && oppositeY < board.boardSize
+                        if (Utility.IsValidCoordinate(oppositeX, oppositeY, board)
                             && !board[oppositeX, oppositeY].firedUpon)
                         {
                             heatmap[oppositeX, oppositeY] += 100;
