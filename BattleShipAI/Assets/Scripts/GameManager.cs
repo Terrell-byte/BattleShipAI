@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public Camera camera;
     public string heatMapStr;
     public bool playerTurn; // If false -> computer turn
-    public bool gameStarted, showHeatMap, placingShips, intelligentAI;
+    public bool gameStarted, showHeatMap, placingShips, intelligentAI, usePreviousPlacement;
     public int boardSize, boardOffset;
     public int numberOfShips = 5;
 

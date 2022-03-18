@@ -20,5 +20,10 @@ public class Toggle : MonoBehaviour
         GameManager.instance.intelligentAI = !GameManager.instance.intelligentAI;
     }
 
+    public void PredictPlayer()
+    {
+        GameManager.instance.usePreviousPlacement = !GameManager.instance.usePreviousPlacement;
+    }
+
     
 }

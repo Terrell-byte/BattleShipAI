@@ -7,6 +7,15 @@ public class Heatmap : MonoBehaviour
     public int[,] heatmap;
     private int[,] neighbours = { { 1, 0 }, { 0, 1 }, { -1, 0 }, { 0, -1 } };
     public List<Battleship> playerShipsRemaining = new List<Battleship>();
+    private int[,] previousPlayerPlacement = new int[10,10];
+
+    /*
+     * Get smarter based on previous players' placement of ships
+     */
+    public void InitPreviousPlayerPlacement()
+    {
+        previousPlayerPlacement = TextHandler.ReadString();
+    }
 
 
     /// <summary>
@@ -17,21 +26,32 @@ public class Heatmap : MonoBehaviour
     /// <returns></returns>
     public int GetHighestHeatMapValue(out int indexX, out int indexY)
     {
-        indexX = 0;
-        indexY = 0;
+        List<int> xList = new List<int>();
+        List<int> yList = new List<int>();
         int highestValue = 0;
         for (int y = 0; y < heatmap.GetLength(0); y++)
         {
             for (int x = 0; x < heatmap.GetLength(0); x++)
             {
-                if (heatmap[x, y] > highestValue)
+                if (heatmap[x, y] >= highestValue) //There might be several of the same heatmap values. We choose a random one, if that is the case. 
                 {
-                    highestValue = heatmap[x, y];
-                    indexX = x;
-                    indexY = y;
+                    if(heatmap[x, y] > highestValue) //If a new highest value is found, we replace the old one and clear the lists. 
+                    {
+                        xList.Clear();
+                        yList.Clear();
+                        highestValue = heatmap[x, y];
+                    }
+
+                    xList.Add(x);
+                    yList.Add(y);
                 }
             }
         }
+
+        int randomHighestIndex = Random.Range(0, xList.Count);
+        indexX = xList[randomHighestIndex];
+        indexY = yList[randomHighestIndex];
+
         return highestValue;
     }
 
@@ -41,7 +61,8 @@ public class Heatmap : MonoBehaviour
     public void UpdateHeatMap()
     {
         Board board = GameManager.instance.playerBoard;
-        heatmap = new int[GameManager.instance.boardSize, GameManager.instance.boardSize]; //reset heatmap
+        heatmap = new int[board.boardSize, board.boardSize]; //reset heatmap
+        heatmap = new int[board.boardSize, board.boardSize]; //reset heatmap
 
         for (int x = 0; x < board.boardSize; x++)
         {
@@ -50,6 +71,12 @@ public class Heatmap : MonoBehaviour
                 TryToPlaceAllShips(x, y, board, true); //true means horisontal
                 TryToPlaceAllShips(x, y, board, false); //false means vertical
                 SetPriorityOfShotField(x, y, board);
+
+                if(board.boardSize == 10 && GameManager.instance.usePreviousPlacement)
+                {
+                    heatmap[x, y] += previousPlayerPlacement[x,y];
+                }
+
             }
         }
 
@@ -92,14 +119,15 @@ public class Heatmap : MonoBehaviour
             }
         }
 
-        if (!hitNeighbour) //no hit neighbour, so prioritize all four surrounding fields
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                int x = posX + neighbours[i, 0];
-                int y = posY + neighbours[i, 1];
 
-                if (Utility.IsValidCoordinate(x, y, board))
+        for (int i = 0; i < 4; i++)
+        {
+            int x = posX + neighbours[i, 0];
+            int y = posY + neighbours[i, 1];
+
+            if (Utility.IsValidCoordinate(x, y, board))
+            {
+                if (!hitNeighbour) //
                 {
                     if (!board[x, y].firedUpon)
                     {
@@ -107,16 +135,7 @@ public class Heatmap : MonoBehaviour
                         //Debug.Log("no hit heighbours: "+ posX + neighbours[i, 0]+","+ posY + neighbours[i, 1]);
                     }
                 }
-            }
-        }
-        else //a neighbour is hit, so prioritise the other direction
-        {
-            for (int i = 0; i < 4; i++)
-            {
-                int x = posX + neighbours[i, 0];
-                int y = posY + neighbours[i, 1];
-
-                if (Utility.IsValidCoordinate(x, y, board))
+                else
                 {
                     if (board[x, y].firedUpon)
                     {
@@ -132,8 +151,11 @@ public class Heatmap : MonoBehaviour
                         }
                     }
                 }
+
             }
         }
+
+
     }
 
     /// <summary>

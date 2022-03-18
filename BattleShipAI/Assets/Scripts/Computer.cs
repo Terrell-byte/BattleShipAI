@@ -9,14 +9,12 @@ public class Computer : MonoBehaviour
     //public List<Battleship> playerShipsRemaining = new List<Battleship>();
 
 
-    private List<Field> hitFields = new List<Field>();
-
-
-    
+    //private List<Field> hitFields = new List<Field>();
 
     private void Awake()
     {
         heatmap = new Heatmap();
+        heatmap.InitPreviousPlayerPlacement();
     }
 
     /*

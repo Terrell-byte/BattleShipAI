@@ -27,6 +27,7 @@ public class PlacementStrategy : MonoBehaviour
         foreach (Battleship b in battleships)
         {
             bool hasPlacedShip = false;
+            int attemptsMade = 0; //if it tries to follow rules, but cannot, it is allowed to break them after a certain amount of tries. 
             while (!hasPlacedShip)
             {
                 //int tryToFollowRules = 0;
@@ -36,31 +37,26 @@ public class PlacementStrategy : MonoBehaviour
                 int height = vertical ? b.size : 1;
                 int length = vertical ? 1 : b.size;
 
-                // The middle is only off-limits, if the board is large enough. 
-                if (board.boardSize > 8)
-                {
-                    // A ship should not be placed in the middle
-                    if (IsInMiddle(xPos, yPos, height, length, board))
+
+                    if ((board.boardSize > 8 && IsInMiddle(xPos, yPos, height, length, board)) //Avoid the middle
+                        || MultipleRowSpacesTaken(yPos, board) //Avoid rows with horisontal ships
+                        || HasNeighbouringShip(board, b, xPos, yPos) //Avoid placing next to other ships
+                        )
                     {
-                        continue;
+                        attemptsMade++;
+                        if(attemptsMade > 10000)
+                        {
+                        Debug.Log(attemptsMade);
+                        RetryPlacement(sp, board, boardOffset, numberOfShips); //Start over, if the rules could not be followed
+                            return;
+                        }
+                            continue;
                     }
-                }
-
-                // Two ships may only share one row if at least one of them is vertical
-                if (MultipleRowSpacesTaken(yPos, board))
-                {
-                    continue;
-                }
-
-                // Should not place ship right above or below another
-                if ((yPos + 1 < board.boardSize && !Utility.IsValidPlacement(xPos, yPos + 1, b.size, 1, board))
-                    || (yPos - 1 >= 0 && !Utility.IsValidPlacement(xPos, yPos - 1, b.size, 1, board)))
-                {
-                    continue;
-                }
 
                 if (Utility.IsValidPlacement(xPos, yPos, length, height, board))
                 {
+                    Debug.Log(attemptsMade);
+                    attemptsMade = 0;
                     for (int j = 0; j < b.size; j++)
                     {
                         int x = vertical ? xPos : xPos + j;
@@ -77,6 +73,25 @@ public class PlacementStrategy : MonoBehaviour
             }
 
         }
+    }
+
+    private void RetryPlacement(ShipPlacer sp, Board board, int boardOffset, int numberOfShips)
+    {
+        foreach(Field field in board.GetBoard())
+        {
+            field.fieldPartOfShip = null;
+            field.shipPresent = false;
+        }
+
+        PlaceShipsStrategically(sp, board, boardOffset, numberOfShips);
+    }
+
+    private bool HasNeighbouringShip(Board board, Battleship b, int x, int y)
+    {
+        return (y + 1 < board.boardSize && !Utility.IsValidPlacement(x, y + 1, b.size, 1, board))
+                            || (y - 1 >= 0 && !Utility.IsValidPlacement(x, y - 1, b.size, 1, board))
+                            || (x + 1 < board.boardSize && !Utility.IsValidPlacement(x + 1, y, 1, b.size, board))
+                            || (x - 1 >= 0 && !Utility.IsValidPlacement(x - 1, y, 1, b.size, board));
     }
 
     /// <summary>

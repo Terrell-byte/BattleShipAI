@@ -54,6 +54,7 @@ public class ShipPlacer : MonoBehaviour
         }
         else
         {
+            TextHandler.UpdatePreviousPlayerPlacement(GameManager.instance.playerBoard);
             GameManager.instance.placingShips = false;
             GameManager.instance.StartGame();
         }
