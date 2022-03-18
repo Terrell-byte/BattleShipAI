@@ -14,4 +14,9 @@ public class Button : MonoBehaviour
         GameManager.instance.PlayerIsReady();
         gameObject.SetActive(false);
     }
+
+    public void Quit()
+    {
+        Application.Quit(); //ignored in editor
+    }
 }

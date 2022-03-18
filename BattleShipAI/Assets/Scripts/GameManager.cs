@@ -21,7 +21,6 @@ public class GameManager : MonoBehaviour
     public bool gameStarted, showHeatMap, placingShips, intelligentAI;
     public int boardSize, boardOffset;
     public int numberOfShips = 5;
-    private PlacementStrategy placementStrategy = new PlacementStrategy();
 
     private int playerShipsRemaining, computerShipsRemaining;
 
@@ -54,7 +53,7 @@ public class GameManager : MonoBehaviour
         computerBoard = Utility.GenerateComputerBoard(new Board(boardSize), boardOffset);
 
         LetPlayerPlaceShips(battleships);
-        placementStrategy.PlaceShipsStrategically(shipPlacer, computerBoard, boardOffset, numberOfShips);
+        computer.PlaceComputerShips(shipPlacer, computerBoard, boardOffset, numberOfShips);
 
         computerShipsRemaining = numberOfShips;
         playerShipsRemaining = numberOfShips;
@@ -146,6 +145,14 @@ public class GameManager : MonoBehaviour
             victoryText.gameObject.SetActive(true);
             Debug.Log("Player has won");
             gameStarted = false;
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKey("escape"))
+        {
+            Application.Quit();
         }
     }
 }

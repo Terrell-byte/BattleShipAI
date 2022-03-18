@@ -51,7 +51,6 @@ public class ShipPlacer : MonoBehaviour
             spriteRenderer.sprite = GameManager.instance.GetComponent<SpriteManager>().shipSprite[shipsToPlace[currentShip].size - 2];
             length = shipsToPlace[currentShip].size;
             height = 1;
-            
         }
         else
         {
@@ -95,12 +94,6 @@ public class ShipPlacer : MonoBehaviour
             && position.y + height <= GameManager.instance.boardSize)
         {
             transform.position = vertical ? new Vector3(position.x + 1, position.y, position.z) : position;
-            /* transform.position = position;
-
-            if (vertical)
-            {
-                transform.position = new Vector2(transform.position.x + 1, transform.position.y);
-            } */
         }
     }
 
@@ -152,8 +145,8 @@ public class ShipPlacer : MonoBehaviour
         ship.x = posX;
         ship.y = posY;
 
-        if (posX + length > GameManager.instance.boardSize 
-            || posY + height > GameManager.instance.boardSize
+        if (posX + length > board.boardSize
+            || posY + height > board.boardSize
             || !Utility.IsValidPlacement(posX, posY, length, height, board))
         {
             return;

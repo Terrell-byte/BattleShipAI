@@ -5,6 +5,7 @@ using UnityEngine;
 public class Computer : MonoBehaviour
 {
     public Heatmap heatmap = new Heatmap();
+    private PlacementStrategy placementStrategy = new PlacementStrategy();
     //public List<Battleship> playerShipsRemaining = new List<Battleship>();
 
 
@@ -18,7 +19,14 @@ public class Computer : MonoBehaviour
         heatmap = new Heatmap();
     }
 
+    /*
+     * Placement strategy
+     */
 
+    public void PlaceComputerShips(ShipPlacer shipPlacer, Board computerBoard, int boardOffset, int numberOfShips)
+    {
+        placementStrategy.PlaceShipsStrategically(shipPlacer, computerBoard, boardOffset, numberOfShips);
+    }
 
     /*
      * Firing strategy
@@ -41,7 +49,7 @@ public class Computer : MonoBehaviour
             {
                 board[x, y].FieldHit();
             }
-            else //if the heatmap is bugged, the computer will just slowly work through unshot fields
+            else //if the heatmap is bugged, the computer will just slowly work through unshot fields. This does not happen.
             {
                 x = 0;
                 y = 0;
@@ -54,7 +62,6 @@ public class Computer : MonoBehaviour
                 }
                 board[x, y].FieldHit();
             }
-
         }
         else //Shoots randomly if on low difficulty
         {
@@ -78,10 +85,5 @@ public class Computer : MonoBehaviour
         GameManager.instance.playerTurn = true; //end computer turn
     }
 
-
-
-
-
-
-
+    
 }
