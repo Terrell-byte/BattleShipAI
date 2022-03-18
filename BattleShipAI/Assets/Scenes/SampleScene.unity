@@ -439,7 +439,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &460493401
 RectTransform:
   m_ObjectHideFlags: 0
@@ -748,22 +748,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbcbf8e10e17ed2439462fcbf6609372, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heatMapStr: 
   shipPlacer: {fileID: 1992835070}
+  computer: {fileID: 732082089}
   victoryText: {fileID: 421498952}
+  fieldPrefab: {fileID: 7673451516273354427, guid: 297637d4dba7dfa4fbdab4228a3ddf41, type: 3}
+  heatMapCanvas: {fileID: 2116427929}
+  heatmapText: {fileID: 5586768869459781663, guid: b3204714906e8b9438641c67932f8c84, type: 3}
+  heatmapToggle: {fileID: 460493400}
+  camera: {fileID: 887179866}
+  heatMapStr: 
+  playerTurn: 1
+  gameStarted: 0
+  showHeatMap: 0
+  placingShips: 0
+  intelligentAI: 1
   boardSize: 10
   boardOffset: 12
   numberOfShips: 5
-  playerTurn: 1
-  computer: {fileID: 732082089}
-  gameStarted: 0
-  showHeatMap: 0
-  fieldPrefab: {fileID: 7673451516273354427, guid: 297637d4dba7dfa4fbdab4228a3ddf41, type: 3}
-  placingShips: 0
-  heatMapCanvas: {fileID: 2116427929}
-  heatmapText: {fileID: 5586768869459781663, guid: b3204714906e8b9438641c67932f8c84, type: 3}
-  intelligentAI: 1
-  camera: {fileID: 887179866}
 --- !u!4 &626790408
 Transform:
   m_ObjectHideFlags: 0
@@ -985,6 +986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b247fe871aae0df4d940f1ab6d098dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heatmap: {fileID: 0}
 --- !u!4 &732082090
 Transform:
   m_ObjectHideFlags: 0
@@ -1597,7 +1599,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 1899514929}
   m_HandleRect: {fileID: 113652421}
   m_Direction: 0
-  m_MinValue: 6
+  m_MinValue: 8
   m_MaxValue: 30
   m_WholeNumbers: 1
   m_Value: 10
@@ -2827,11 +2829,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cdb1631304d71c41bfb1b90d194923d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentShip: 0
   placedShip: {fileID: 8582619896157758848, guid: 04220d4f0138f79489ea59f72b92def5, type: 3}
-  vertical: 0
+  currentShip: 0
   length: 0
   height: 0
+  vertical: 0
 --- !u!4 &1992835071
 Transform:
   m_ObjectHideFlags: 0

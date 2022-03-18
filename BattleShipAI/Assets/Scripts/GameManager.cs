@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     public Computer computer;
     public Board playerBoard, computerBoard;
     public Text victoryText;
-    public GameObject fieldPrefab, heatMapCanvas, heatmapText;
+    public GameObject fieldPrefab, heatMapCanvas, heatmapText,heatmapToggle;
     public Camera camera;
     public string heatMapStr;
     public bool playerTurn; // If false -> computer turn
@@ -37,10 +37,11 @@ public class GameManager : MonoBehaviour
 
     public void PlayerIsReady()
     {
+        heatmapToggle.SetActive(true);
         GameObject.Find("Playerstart").SetActive(false);
         GameObject.Find("BoardSize").SetActive(false);
 
-        if (boardSize > 10)
+        if (boardSize != 10)
         {
             SetCamera();
         }
@@ -63,13 +64,20 @@ public class GameManager : MonoBehaviour
             computer.heatmap.playerShipsRemaining.Add(bs);
         }
         computer.heatmap.UpdateHeatMap();
+        
     }
 
     private void SetCamera()
     {
-        float scale = ((float)boardSize / 10);
-        camera.orthographicSize = camera.orthographicSize * scale;
+        float scale = ((float)boardSize / 10f);
+        if (boardSize > 10)
+        {
+            camera.orthographicSize = camera.orthographicSize * scale;
+        }
+        
         camera.transform.position = new Vector3(camera.transform.position.x * scale, camera.transform.position.y * scale, -1);
+        heatMapCanvas.GetComponent<RectTransform>().sizeDelta = new Vector2(heatMapCanvas.GetComponent<RectTransform>().sizeDelta.x * scale, heatMapCanvas.GetComponent<RectTransform>().sizeDelta.y * scale);
+        heatMapCanvas.transform.position = heatMapCanvas.transform.position * scale;
     }
 
 
