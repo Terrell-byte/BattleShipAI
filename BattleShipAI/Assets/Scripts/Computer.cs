@@ -40,7 +40,7 @@ public class Computer : MonoBehaviour
         int highestHeatMapValue = heatmap.GetHighestHeatMapValue(out x, out y);
 
 
-        //on higher difficulty it activates the intelligent AI
+        //intelligent AI
         if (GameManager.instance.intelligentAI)
         {
             if (!board[x, y].firedUpon)
@@ -51,8 +51,8 @@ public class Computer : MonoBehaviour
             {
                 x = 0;
                 y = 0;
-                while (x < board.boardSize 
-                    && y < board.boardSize
+                while (x < board.boardSize-1 
+                    && y < board.boardSize-1
                     && board[x, y].firedUpon)
                 {
                     x++;

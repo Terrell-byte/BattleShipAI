@@ -5,9 +5,12 @@ using UnityEngine.UI;
 
 public class UI : MonoBehaviour
 {
+    /// <summary>
+    /// Creates or updates the visual representation of the heatmap
+    /// </summary>
+    /// <param name="heatmap"></param>
     public static void UpdateHeatMapVisually(int[,] heatmap)
     {
-
         foreach (Transform child in GameManager.instance.heatMapCanvas.transform)
         {
             Destroy(child.gameObject);
@@ -24,8 +27,5 @@ public class UI : MonoBehaviour
                 }
             }
         }
-
-        
-
     }
 }

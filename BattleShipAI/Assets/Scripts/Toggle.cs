@@ -24,6 +24,4 @@ public class Toggle : MonoBehaviour
     {
         GameManager.instance.usePreviousPlacement = !GameManager.instance.usePreviousPlacement;
     }
-
-    
 }

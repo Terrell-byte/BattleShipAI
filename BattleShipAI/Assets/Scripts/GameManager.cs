@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public Camera camera;
     public string heatMapStr;
     public bool playerTurn; // If false -> computer turn
-    public bool gameStarted, showHeatMap, placingShips, intelligentAI, usePreviousPlacement;
+    public bool gameStarted, showHeatMap, placingShips, intelligentAI, usePreviousPlacement, InEditor;
     public int boardSize, boardOffset;
     public int numberOfShips = 5;
 
@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
         instance = this;
     }
 
+    /// <summary>
+    /// Before starting the game, the Player can choose to enable certain features.
+    /// </summary>
     public void PlayerIsReady()
     {
         heatmapToggle.SetActive(true);
@@ -63,7 +66,6 @@ public class GameManager : MonoBehaviour
             computer.heatmap.playerShipsRemaining.Add(bs);
         }
         computer.heatmap.UpdateHeatMap();
-        
     }
 
     private void SetCamera()
@@ -148,6 +150,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The player can quit the game by pressing Esc
+    /// </summary>
     private void Update()
     {
         if (Input.GetKey("escape"))
